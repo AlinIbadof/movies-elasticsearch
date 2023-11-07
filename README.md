@@ -15,3 +15,8 @@ By indexing a comprehensive collection of movie metadata, the application provid
 * Vite: An incredibly fast front-end build tool that significantly improves the development experience.
 * Node.js with Express.js: A lightweight and flexible server-side platform that makes building APIs quick and easy.
 * Elasticsearch: A powerful open-source search and analytics engine that provides fast and relevant search features.
+
+## Rest API Design
+Initially, there will be only one endpoint, the GET request for searching movies: GET /api/search/{query}. <br />
+This request will be responsible to retrieve a list of movies that match the given search query, in this case being the movie title.
+
