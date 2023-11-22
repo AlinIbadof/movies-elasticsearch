@@ -78,14 +78,14 @@ This request allows users to update the details of an existing movie.
 
 4. Run `./bin/elasticsearch.bat`. This should open up a command prompt and give you some information on the screen, such as a password. Save the password somewhere for now.
 5. Clone this repository / download as an archive.
-6. Install the node packages,
-   6.1. Open up the **"frontend"** directory and run `npm install`
-   6.2. Open up the **"backend"** directory and run `npm install`
+6. Install the node packages, </br>
+   6.1. Open up the **"frontend"** directory and run `npm install` </br>
+   6.2. Open up the **"backend"** directory and run `npm install` </br>
 7. Inside the **"backend"** directory create a new file called **.env**, the content of the file should look like this: `ELASTIC_PASSWORD=put_password_here`. Remember the password i told you to save earlier? Now is the time to paste it in this file.
 8. While still in the backend directory, run `./dataset/.insertdata.js`.
-9. Now we can start up the Node and Vite servers.
-   9.1. Run `node index.js`.
-   9.2. Open up the frontend, run `npm run dev`.
+9. Now we can start up the Node and Vite servers. </br>
+   9.1. Run `node index.js`. </br>
+   9.2. Open up the frontend, run `npm run dev`. </br>
    9.3. Access [http://localhost:5173](http://localhost:5173).
 
 **Congratulations, You should now be able to see the application!**
