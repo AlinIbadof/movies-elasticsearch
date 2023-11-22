@@ -1,13 +1,24 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const searchRoutes = require("./routes/searchRoutes");
-
 const app = express();
-const port = process.env.PORT || 3001;
+const port = 3001;
+const cors = require("cors");
 
+// Elasticsearch client
+const createMovieIndex = require("./config/elasticSearchMovieIndex");
+createMovieIndex();
+
+// CORS
+app.use(cors());
+
+// Middlewares
 app.use(bodyParser.json());
-app.use("/api/search", searchRoutes);
 
+// Routes
+const movieRoutes = require("./routes/movies");
+app.use("/api/movies", movieRoutes);
+
+// Start server
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server listening at http://localhost:${port}`);
 });
