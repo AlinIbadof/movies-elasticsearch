@@ -1,24 +1,22 @@
-import { useState } from "react";
-import SearchBar from "./components/SearchBar";
-import SearchResult from "./components/SearchResult";
+import Home from "./pages/Home";
+import RandomMovie from "./pages/RandomMovie";
+import SearchMovie from "./pages/SearchMovie";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Layout from "./components/Layout";
 
 function App() {
-  const [results, setResults] = useState([]);
-
-  const handleSearch = async (query) => {
-    try {
-      const response = await fetch(`/api/search/${query}`);
-      const data = await response.json();
-      setResults(data);
-    } catch (error) {
-      console.error("Failed to fetch search results", error);
-    }
-  };
   return (
     <>
-      <h1>React App</h1>
-      <SearchBar onSearch={handleSearch} />
-      <SearchResult results={results} />
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/random-movie" element={<RandomMovie />} />
+            <Route path="/search-movie" element={<SearchMovie />} />
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </Layout>
+      </Router>
     </>
   );
 }
