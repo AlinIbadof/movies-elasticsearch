@@ -6,7 +6,10 @@ async function searchMovies(searchText) {
       index: "movies",
       query: {
         match: {
-          title: searchText,
+          title: {
+            query: searchText,
+            fuzziness: "AUTO",
+          },
         },
       },
     });
@@ -41,7 +44,30 @@ async function getRandomMovies() {
   }
 }
 
+async function searchActor(actorName, size) {
+  try {
+    const result = await client.search({
+      index: "movies",
+      body: {
+        query: {
+          match_phrase: {
+            cast: actorName,
+          },
+        },
+        size: size,
+        sort: [{ year: { order: "desc" } }],
+      },
+    });
+
+    return result.hits.hits.map((hit) => hit._source);
+  } catch (error) {
+    console.error("Error in searchActor service:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   searchMovies,
+  searchActor,
   getRandomMovies,
 };

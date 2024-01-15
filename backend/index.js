@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 // Routes
 const movieRoutes = require("./routes/movies");
-app.use("/api/movies", movieRoutes);
+app.use("/api", movieRoutes);
 
 // Start server
 app.listen(port, () => {

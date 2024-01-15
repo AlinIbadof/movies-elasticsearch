@@ -4,14 +4,14 @@ async function createMovieIndex() {
   const indexName = "movies";
 
   try {
-    // Check if the index already exists
+    // check if the index already exists
     const indexExists = await client.indices.exists({ index: indexName });
     if (indexExists) {
       console.log(`Index ${indexName} already exists. Skipping this part.`);
       return;
     }
 
-    // Create an index with the mapping
+    // create an index with the mapping
     await client.indices.create({
       index: indexName,
       body: {

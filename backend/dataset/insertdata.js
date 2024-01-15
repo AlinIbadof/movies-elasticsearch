@@ -43,9 +43,6 @@ async function bulkIndexMovies(movies) {
 async function main() {
   const movies = readJsonFile(jsonFilePath);
   await bulkIndexMovies(movies);
-
-  // Optional: Verification step
-  // Add any post-indexing verification or logging here if necessary
 }
 
 main().catch(console.error);
