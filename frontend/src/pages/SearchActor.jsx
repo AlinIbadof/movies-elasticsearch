@@ -1,38 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-function RandomMovie() {
+function SearchActor() {
   const API_URL = "http://localhost:3001";
 
+  const { actor: urlActor } = useParams();
   const navigate = useNavigate();
 
-  const [randomMovies, setRandomMovies] = useState([]);
+  const [moviesWithActor, setMoviesWithActor] = useState([]);
   const [currentPageMap, setCurrentPageMap] = useState({});
   const actorsPerPage = 5;
+  const [actorName, setActorName] = useState(urlActor ? urlActor : "");
 
-  const handleGetRandomMovies = async () => {
+  const MOVIES = 20;
+
+  const handleSearchActor = async (actorName) => {
     try {
-      const response = await fetch(`${API_URL}/api/random-movies`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${API_URL}/api/search-actor/?actorName=${actorName}&size=${MOVIES}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
       console.log(data);
 
-      // Initialize currentPage for each movie to 1
       const initialCurrentPageMap = {};
       data.forEach((movie) => {
         initialCurrentPageMap[movie.id] = 1;
       });
 
       setCurrentPageMap(initialCurrentPageMap);
-      setRandomMovies(data);
+      setMoviesWithActor(data);
     } catch (error) {
-      console.error("Failed to fetch random movies", error);
+      console.error("Failed to fetch actor search results", error);
     }
   };
 
@@ -45,26 +51,42 @@ function RandomMovie() {
 
   const handleActorClick = (actor) => {
     navigate(`/search-actor/${encodeURIComponent(actor)}`);
+    setActorName(actor);
   };
+
+  useEffect(() => {
+    if (urlActor) {
+      handleSearchActor(urlActor);
+    }
+  }, [urlActor, actorName]);
 
   return (
     <div className="container-fluid text-primary h-auto d-flex flex-column justify-content-center align-items-center px-5 pt-5">
       <div className="mb-2 text-center">
-        <h2 className="mb-4">Random movie generator</h2>
-        <Button
-          variant="primary"
-          type="submit"
-          className="ms-1 mt-1"
-          onClick={handleGetRandomMovies}
+        <h2 className="mb-4">Search for a specific actor</h2>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            const searchText = event.target.search.value;
+            handleSearchActor(searchText);
+          }}
         >
-          Get random movies
-        </Button>
+          <input
+            type="text"
+            name="search"
+            value={actorName}
+            onChange={(e) => setActorName(e.target.value)}
+          />
+          <Button variant="primary" type="submit" className="ms-1 mt-1">
+            Search
+          </Button>
+        </form>
       </div>
 
-      {randomMovies.length > 0 && (
+      {moviesWithActor.length > 0 && (
         <div style={{ overflowY: "auto", height: "50vh" }}>
           <div className="d-flex flex-wrap justify-content-center overflow-auto">
-            {randomMovies.map((movie) => (
+            {moviesWithActor.map((movie) => (
               <Card
                 key={movie.id}
                 className="m-2"
@@ -92,15 +114,19 @@ function RandomMovie() {
                         )
                         .map((actor, index) => (
                           <li key={`${movie.id}-${index}-${actor}`}>
-                            <a
-                              href={`/${actor}`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleActorClick(actor);
-                              }}
-                            >
-                              {actor}
-                            </a>
+                            {actor === actorName ? (
+                              <strong>{actor}</strong>
+                            ) : (
+                              <a
+                                href={`/${actor}`}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleActorClick(actor);
+                                }}
+                              >
+                                {actor}
+                              </a>
+                            )}
                           </li>
                         ))}
                     </ul>
@@ -157,4 +183,4 @@ function RandomMovie() {
   );
 }
 
-export default RandomMovie;
+export default SearchActor;

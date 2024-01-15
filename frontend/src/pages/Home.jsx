@@ -8,15 +8,20 @@ function Home() {
         Welcome. What would you like to do today?
       </h2>
 
-      <div className="d-flex">
-        <Button variant="primary" className="me-3">
+      <div className="d-flex flex-column flex-md-row justify-content-center gap-2 w-100">
+        <Button variant="primary col-md-3 col-sm-12">
           <Link className="linkstyle" to="/search-movie">
             Search for a movie
           </Link>
         </Button>
-        <Button variant="primary">
+        <Button variant="primary col-md-3 col-sm-12">
           <Link className="linkstyle" to="/random-movie">
-            Get random movies
+            Looking for some random movies?
+          </Link>
+        </Button>
+        <Button variant="primary col-md-3 col-sm-12">
+          <Link className="linkstyle" to="/search-actor">
+            Movies with specific actor
           </Link>
         </Button>
       </div>

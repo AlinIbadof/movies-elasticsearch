@@ -1,9 +1,12 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import { useNavigate } from "react-router-dom";
 
 function SearchMovie() {
   const API_URL = "http://localhost:3001";
+
+  const navigate = useNavigate();
 
   const [movie, setMovie] = useState();
 
@@ -17,7 +20,7 @@ function SearchMovie() {
   const handleSearchMovie = async (searchText) => {
     try {
       const response = await fetch(
-        `${API_URL}/api/movies/?searchText=${searchText}`,
+        `${API_URL}/api/search-movie/?searchText=${searchText}`,
         {
           method: "GET",
           headers: {
@@ -31,6 +34,10 @@ function SearchMovie() {
     } catch (error) {
       console.error("Failed to fetch search results", error);
     }
+  };
+
+  const handleActorClick = (actor) => {
+    navigate(`/search-actor/${encodeURIComponent(actor)}`);
   };
 
   return (
@@ -53,41 +60,60 @@ function SearchMovie() {
 
       {movie && Object.keys(movie).length > 0 ? (
         <div className="container d-flex justify-content-center">
-          <Card className="mt-2 col-12 col-md-8 col-lg-6">
+          <Card className="m-2" style={{ height: "465px", width: "325px" }}>
             <Card.Body>
-              <Card.Title>{movie.title}</Card.Title>
-              <Card.Subtitle className="mb-2 text-muted">
-                {movie.year}
-              </Card.Subtitle>
+              <Card.Title style={{ height: "50px" }}>
+                <strong>{movie.title}</strong>
+                <span className="ps-1 text-muted small">{movie.year}</span>
+              </Card.Title>
               <hr />
               <Card.Text className="font-weight-bold">Cast: </Card.Text>
 
-              <ul style={{ listStyleType: "none", margin: 0, padding: 0 }}>
-                {currentActors?.map((actor) => (
-                  <li key={actor}>{actor}</li>
-                ))}
-              </ul>
+              <div style={{ height: "150px" }}>
+                <ul
+                  style={{
+                    listStyleType: "none",
+                    margin: 0,
+                    padding: 0,
+                  }}
+                >
+                  {currentActors?.map((actor, index) => (
+                    <li key={`${movie.id}-${index}-${actor}`}>
+                      <a
+                        href={`/${actor}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleActorClick(actor);
+                        }}
+                      >
+                        {actor}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
 
-              {movie.cast && movie.cast.length > actorsPerPage && (
-                <div className="d-flex justify-content-center">
-                  <Button
-                    variant="link"
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((prev) => prev - 1)}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="link"
-                    disabled={lastActorIndex >= movie.cast.length}
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
+                {movie.cast && movie.cast.length > actorsPerPage && (
+                  <div className="d-flex justify-content-center">
+                    <Button
+                      variant="link"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((prev) => prev - 1)}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="link"
+                      disabled={lastActorIndex >= movie.cast.length}
+                      onClick={() => setCurrentPage((prev) => prev + 1)}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
+              </div>
 
               <hr />
+
               <Card.Text>Genres:</Card.Text>
 
               <ul>
@@ -99,7 +125,9 @@ function SearchMovie() {
           </Card>
         </div>
       ) : (
-        <p>No movie found. Please try a different search.</p>
+        movie !== undefined && (
+          <p>No movie found. Please try a different search.</p>
+        )
       )}
     </div>
   );
