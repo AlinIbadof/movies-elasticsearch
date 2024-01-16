@@ -42,8 +42,8 @@ function SearchMovie() {
 
   return (
     <div className="container-fluid text-primary h-auto d-flex flex-column justify-content-center align-items-center px-5 pt-5">
-      <div className="mb-2">
-        <h2 className="text-center mb-4">Search for a movie</h2>
+      <div className="mb-2 text-center">
+        <h2 className="mb-4">Search for a movie</h2>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -52,7 +52,7 @@ function SearchMovie() {
           }}
         >
           <input type="text" name="search" />
-          <Button variant="primary" type="submit" className="ms-1">
+          <Button variant="primary" type="submit" className="ms-1 mt-1">
             Search
           </Button>
         </form>
