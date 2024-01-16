@@ -1,24 +1,26 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 
-function AddMovie() {
+function UpdateMovie() {
   const API_URL = "http://localhost:3001";
   const [title, setTitle] = useState("");
+  const [newTitle, setNewTitle] = useState("");
   const [year, setYear] = useState("");
   const [cast, setCast] = useState("");
   const [genres, setGenres] = useState("");
   const [success, setSuccess] = useState();
 
-  const handleAddMovie = async () => {
+  const handleUpdateMovie = async () => {
     try {
       const response = await fetch(`${API_URL}/api/movie`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title,
-          year: parseInt(year, 10),
+          newTitle,
+          year,
           cast: cast.split(",").map((actor) => actor.trim()),
           genres: genres.split(",").map((genre) => genre.trim()),
         }),
@@ -26,11 +28,9 @@ function AddMovie() {
 
       const data = await response.json();
       console.log(data);
-
       setSuccess(true);
-      // Handle success or display error message
     } catch (error) {
-      console.error("Failed to add movie:", error);
+      console.error("Failed to delete movie:", error);
       setSuccess(false);
     }
   };
@@ -38,22 +38,34 @@ function AddMovie() {
   return (
     <div className="container-fluid d-flex flex-column justify-content-center align-items-center">
       <div className="text-center p-4">
-        <h2>Add a Movie</h2>
+        <h2 className="text-center mb-4">Update a Movie</h2>
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="d-flex gap-2 mb-3 justify-content-center align-items-center">
-            <label htmlFor="title" className="form-label w-25">
-              Title:
+            <label htmlFor="currentTitle" className="form-label w-50">
+              Current Title:
             </label>
             <input
               type="text"
-              id="title"
+              id="currentTitle"
               className="form-control forminput"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
           <div className="d-flex gap-2 mb-3 justify-content-center align-items-center">
-            <label htmlFor="year" className="form-label w-25">
+            <label htmlFor="newTitle" className="form-label w-50">
+              New Title (optional):
+            </label>
+            <input
+              type="text"
+              id="newTitle"
+              className="form-control forminput"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+            />
+          </div>
+          <div className="d-flex gap-2 mb-3 justify-content-center align-items-center">
+            <label htmlFor="year" className="form-label w-50">
               Year:
             </label>
             <input
@@ -65,7 +77,7 @@ function AddMovie() {
             />
           </div>
           <div className="d-flex gap-2 mb-3 justify-content-center align-items-center">
-            <label htmlFor="cast" className="form-label w-25">
+            <label htmlFor="cast" className="form-label w-50">
               Cast:
             </label>
             <input
@@ -76,9 +88,9 @@ function AddMovie() {
               onChange={(e) => setCast(e.target.value)}
             />
           </div>
-          <div className="d-flex gap-2 mb-3 align-items-center">
-            <label htmlFor="genres" className="form-label w-25">
-              Genre:
+          <div className="d-flex gap-2 mb-3 justify-content-center align-items-center">
+            <label htmlFor="genres" className="form-label w-50">
+              Genres:
             </label>
             <input
               type="text"
@@ -88,17 +100,19 @@ function AddMovie() {
               onChange={(e) => setGenres(e.target.value)}
             />
           </div>
-          <Button variant="primary" onClick={handleAddMovie}>
-            Add Movie
+          <Button variant="primary" onClick={handleUpdateMovie}>
+            Update Movie
           </Button>
         </form>
       </div>
       {success === true && (
-        <p className="text-success">Movie added succesfully</p>
+        <p className="text-success">Movie updated succesfully</p>
       )}
-      {success === false && <p className="text-danger">Failed to add movie</p>}
+      {success === false && (
+        <p className="text-danger">Failed to update movie</p>
+      )}
     </div>
   );
 }
 
-export default AddMovie;
+export default UpdateMovie;
