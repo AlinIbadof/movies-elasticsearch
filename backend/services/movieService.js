@@ -80,9 +80,37 @@ async function addMovie(movie) {
   }
 }
 
+async function deleteMovieByNameAndYear(title, year) {
+  try {
+    const result = await client.search({
+      index: "movies",
+      body: {
+        query: {
+          bool: {
+            must: [{ match: { title } }, { match: { year } }],
+          },
+        },
+      },
+    });
+
+    const hits = result.hits.hits;
+
+    if (hits.length === 0) {
+      throw new Error("Movie not found.");
+    }
+
+    const movieId = hits[0]._id;
+    await client.delete({ index: "movies", id: movieId });
+  } catch (error) {
+    console.error("Error in deleteMovieByNameAndYear service:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   searchMovies,
   searchActor,
   getRandomMovies,
   addMovie,
+  deleteMovieByNameAndYear,
 };

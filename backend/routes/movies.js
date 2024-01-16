@@ -3,7 +3,7 @@ const router = express.Router();
 const movieService = require("../services/movieService");
 const { getLastIdFromJsonFile } = require("../utils");
 
-router.get("/search-movie/", async (req, res) => {
+router.get("/movie", async (req, res) => {
   try {
     const { searchText } = req.query;
     const movie = await movieService.searchMovies(searchText);
@@ -39,7 +39,7 @@ router.get("/search-actor/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/movie", async (req, res) => {
   try {
     const { title, year, cast, genres } = req.body;
 
@@ -54,6 +54,17 @@ router.post("/", async (req, res) => {
     await movieService.addMovie(newMovie);
 
     res.json({ success: true, message: "Movie added successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.toString());
+  }
+});
+
+router.delete("/movie", async (req, res) => {
+  try {
+    const { title, year } = req.body;
+    await movieService.deleteMovieByNameAndYear(title, year);
+    res.json({ success: true, message: "Movie deleted successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.toString());
