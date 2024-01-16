@@ -20,7 +20,7 @@ function SearchMovie() {
   const handleSearchMovie = async (searchText) => {
     try {
       const response = await fetch(
-        `${API_URL}/api/search-movie/?searchText=${searchText}`,
+        `${API_URL}/api/movie/?searchText=${searchText}`,
         {
           method: "GET",
           headers: {
