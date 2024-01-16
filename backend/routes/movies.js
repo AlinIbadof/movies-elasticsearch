@@ -71,4 +71,26 @@ router.delete("/movie", async (req, res) => {
   }
 });
 
+router.put("/movie", async (req, res) => {
+  try {
+    const { title, newTitle, year, cast, genres } = req.body;
+    const existingMovie = await movieService.searchMovies(title);
+
+    const updatedMovie = { title, newTitle, year, cast, genres };
+
+    if (!existingMovie) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Movie not found." });
+    }
+
+    await movieService.updateMovie(updatedMovie);
+
+    res.json({ success: true, message: "Movie updated successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.toString());
+  }
+});
+
 module.exports = router;

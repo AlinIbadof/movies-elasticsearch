@@ -82,16 +82,30 @@ async function addMovie(movie) {
 
 async function deleteMovieByNameAndYear(title, year) {
   try {
-    const result = await client.search({
-      index: "movies",
-      body: {
-        query: {
-          bool: {
-            must: [{ match: { title } }, { match: { year } }],
+    let result;
+    if (year === "") {
+      result = await client.search({
+        index: "movies",
+        body: {
+          query: {
+            bool: {
+              must: [{ match: { title } }],
+            },
           },
         },
-      },
-    });
+      });
+    } else {
+      result = await client.search({
+        index: "movies",
+        body: {
+          query: {
+            bool: {
+              must: [{ match: { title } }, { match: { year } }],
+            },
+          },
+        },
+      });
+    }
 
     const hits = result.hits.hits;
 
@@ -107,10 +121,59 @@ async function deleteMovieByNameAndYear(title, year) {
   }
 }
 
+async function updateMovie(updatedMovie) {
+  try {
+    const { title, newTitle, year, cast, genres } = updatedMovie;
+
+    const result = await client.search({
+      index: "movies",
+      body: {
+        query: {
+          bool: {
+            must: [{ match: { title } }],
+          },
+        },
+      },
+    });
+
+    const hits = result.hits.hits;
+
+    if (hits.length === 0) {
+      throw new Error("Movie not found.");
+    }
+
+    const movieId = hits[0]._id;
+    const updatedTitle = newTitle !== "" ? newTitle : title;
+    const updatedYear = year !== "" ? year : new Date().getFullYear();
+
+    const updatedCast = cast !== "" ? cast : [];
+    const updatedGenres = genres !== "" ? genres : [];
+
+    const response = await client.update({
+      index: "movies",
+      id: movieId,
+      body: {
+        doc: {
+          title: updatedTitle,
+          year: updatedYear,
+          cast: updatedCast,
+          genres: updatedGenres,
+        },
+      },
+    });
+
+    console.log(`Movie updated successfully: ${JSON.stringify(response)}`);
+  } catch (error) {
+    console.error("Error in updateMovie service:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   searchMovies,
   searchActor,
   getRandomMovies,
   addMovie,
   deleteMovieByNameAndYear,
+  updateMovie,
 };
