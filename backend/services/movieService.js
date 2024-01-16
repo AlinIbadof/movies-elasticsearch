@@ -66,8 +66,23 @@ async function searchActor(actorName, size) {
   }
 }
 
+async function addMovie(movie) {
+  try {
+    const result = await client.index({
+      index: "movies",
+      body: movie,
+    });
+
+    return result.id;
+  } catch (error) {
+    console.error("Error in addMovie service:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   searchMovies,
   searchActor,
   getRandomMovies,
+  addMovie,
 };

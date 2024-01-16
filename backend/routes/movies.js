@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const movieService = require("../services/movieService");
+const { getLastIdFromJsonFile } = require("../utils");
 
 router.get("/search-movie/", async (req, res) => {
   try {
@@ -32,6 +33,27 @@ router.get("/search-actor/", async (req, res) => {
       page
     );
     res.json(moviesWithActor);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.toString());
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const { title, year, cast, genres } = req.body;
+
+    const newMovie = {
+      id: getLastIdFromJsonFile("./dataset/movies.json") + 1,
+      title,
+      year,
+      cast: cast || [],
+      genres: genres || [],
+    };
+
+    await movieService.addMovie(newMovie);
+
+    res.json({ success: true, message: "Movie added successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.toString());
