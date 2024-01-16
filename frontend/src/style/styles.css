@@ -10,3 +10,7 @@ body {
   color: inherit;
   display: inline-block;
 }
+
+.forminput {
+  width: 200px;
+}
